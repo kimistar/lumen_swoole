@@ -13,9 +13,7 @@ class SwooleServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        $this->publishes([
-            __DIR__ . '/../config/swoole.php' => base_path('config/swoole.php'),
-        ],'config');
+
     }
 
     public function register()
@@ -29,8 +27,7 @@ class SwooleServiceProvider extends ServiceProvider
         ]);
 
         $this->app->singleton('swoole.http',function($app) {
-            $lumenApp = require base_path('bootstrap/app.php');
-            return new SwooleHttpServer(config('swoole'),$lumenApp);
+            return new SwooleHttpServer($app);
         });
     }
 }
