@@ -29,7 +29,8 @@ class SwooleServiceProvider extends ServiceProvider
         ]);
 
         $this->app->singleton('swoole.http',function($app) {
-            return new SwooleHttpServer(config('swoole'),base_path('bootstrap/app.php'));
+            $lumenApp = require base_path('bootstrap/app.php');
+            return new SwooleHttpServer(config('swoole'),$lumenApp);
         });
     }
 }

@@ -14,18 +14,16 @@ class SwooleHttpServer
     protected $config;
     protected $server;
     protected $app;
-    protected $bootstrapFile;
 
-    public function __construct(array $config,$bootstrapFile)
+    public function __construct(array $config,$lumenApp)
     {
         $this->config = $config;
-        $this->bootstrapFile = $bootstrapFile;
+        $this->app = $lumenApp;
+        $this->server = new Server($this->config['host'],$this->config['port']);
     }
 
     public function run()
     {
-        $this->server = new Server($this->config['host'],$this->config['port']);
-
         $this->server->set($this->config['options']);
         $this->server->on('start',[$this,'onStart']);
         $this->server->on('managerStart',[$this,'onManagerStart']);
@@ -42,7 +40,7 @@ class SwooleHttpServer
     protected function onWorkerStart()
     {
         swoole_set_process_name('swoole http server worker');
-        $this->app = require $this->bootstrapFile;
+        //$this->app = require base_path('bootstrap/app.php');
     }
 
     protected function onManagerStart()
@@ -52,6 +50,13 @@ class SwooleHttpServer
 
     protected function onRequest(\swoole_http_request $request,\swoole_http_response $response)
     {
+        //convert swoole headers and server
+        $request = Request::convertHeaders($request);
 
+        //handle request and return illuminate response
+        $illuminateResponse = Request::handle($request,$this->app);
+
+        //handle illuminate response
+        Response::handle($response,$illuminateResponse);
     }
 }
