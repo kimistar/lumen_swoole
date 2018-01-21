@@ -1,2 +1,2 @@
 # lumen_swoole
-test lumen framework integrated with swoole ext
+test lumen framework integrated with swoole extension
