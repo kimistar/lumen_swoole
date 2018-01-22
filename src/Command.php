@@ -22,6 +22,9 @@ class Command extends IlluminateCommand
 
     public function handle()
     {
+        if (!extension_loaded('swoole')) {
+            $this->error('First of all,you must install swoole extension!');
+        }
         $action = $this->argument('action');
         switch ($action) {
             case 'start':
@@ -36,6 +39,8 @@ class Command extends IlluminateCommand
             case 'reload':
                 $this->reload();
                 break;
+            default:
+                $this->error('Please type correct action . start | restart | stop | reload');
         }
     }
 

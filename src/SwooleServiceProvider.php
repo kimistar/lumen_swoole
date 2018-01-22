@@ -27,7 +27,8 @@ class SwooleServiceProvider extends ServiceProvider
         ]);
 
         $this->app->singleton('swoole.http',function($app) {
-            return new SwooleHttpServer($app);
+            $swooleConfig = $app->make('config')->get('swoole');
+            return new SwooleHttpServer($swooleConfig);
         });
     }
 }

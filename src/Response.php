@@ -41,7 +41,7 @@ class Response
             $content = $illuminateResponse->getContent();
             // check gzip
         }
-        return self::end($swooleReponse,$content);
+        self::end($swooleReponse,$content);
     }
 
     public static function end($swooleResponse,$content)

@@ -15,10 +15,9 @@ class SwooleHttpServer
     protected $server;
     protected $app;
 
-    public function __construct($app)
+    public function __construct($swooleConfig)
     {
-        $this->app = $app;
-        $this->config = $app->make('config')->get('swoole');
+        $this->config = $swooleConfig;
         $this->server = new Server($this->config['host'],$this->config['port']);
     }
 
@@ -39,6 +38,7 @@ class SwooleHttpServer
 
     public function onWorkerStart()
     {
+        $this->app = require base_path('bootstrap/app.php');
         swoole_set_process_name('swoole http server worker');
         //$this->app = require base_path('bootstrap/app.php');
     }
