@@ -1,4 +1,3 @@
-# lumen_swoole
 ## Speed up lumen5.5 api application by swoole extension
 
 ### Start
@@ -7,9 +6,24 @@ composer require kimistar/lumen_swoole
 ```
 
 Register service provider in bootstrap/app.php
-
 ```
 $app->register(Star\LumenSwoole\SwooleServiceProvider::class);
+```
+
+Configure your own config file named swoole.php in config dir
+```
+return [
+    'host' => env('SWOOLE_HOST','127.0.0.1'),
+    'port' => env('SWOOLE_PORT',8080),
+    'options' => [
+        'worker_num' => env('SWOOLE_WORKER_NUM',8),
+        'max_request' => env('SWOOLE_MAX_REQUEST',2000),
+        'dispatch_mode' => 3,
+        'daemonize' => env('SWOOLE_DAEMONIZE',1),
+        'log_file' => storage_path('logs/swoole_server.log'),
+        'pid_file' => storage_path('logs/swoole_server.pid'),
+    ],
+];
 ```
 
 You can start | restart | stop | reload the swoole http server by artisan command
@@ -17,8 +31,9 @@ You can start | restart | stop | reload the swoole http server by artisan comman
 php artisan swoole:http start | restart | stop | reload
 ```
 
-By default,the server listens on 8080 port and runs 8 worker process.
+As you can see,the server listens on 8080 port and runs 8 worker processes.
 
+Then configure nginx server like this  @https://github.com/huang-yi/laravel-swoole-http
 ```nginx
 server {
     listen 80;
@@ -54,4 +69,3 @@ server {
     }
 }
 ```
-Reference to this nginx proxy config @https://github.com/huang-yi/laravel-swoole-http
