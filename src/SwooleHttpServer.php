@@ -7,8 +7,6 @@
  */
 namespace Star\LumenSwoole;
 
-use Swoole\Http\Server;
-
 class SwooleHttpServer
 {
     protected $config;
@@ -18,45 +16,51 @@ class SwooleHttpServer
     public function __construct($swooleConfig)
     {
         $this->config = $swooleConfig;
-        $this->server = new Server($this->config['host'],$this->config['port']);
+        $this->server = new \swoole_http_server($this->config['host'],$this->config['port']);
     }
 
     public function run()
     {
+        #set swoole http server configuration
         $this->server->set($this->config['options']);
+        #set event listener
         $this->server->on('start',[$this,'onStart']);
         $this->server->on('managerStart',[$this,'onManagerStart']);
         $this->server->on('workerStart',[$this,'onWorkerStart']);
         $this->server->on('request',[$this,'onRequest']);
+        #start swoole http server
         $this->server->start();
     }
 
     public function onStart()
     {
-        swoole_set_process_name('swoole http server master');
-    }
-
-    public function onWorkerStart()
-    {
-        $this->app = require base_path('bootstrap/app.php');
-        swoole_set_process_name('swoole http server worker');
-        //$this->app = require base_path('bootstrap/app.php');
+        #set master process name
+        swoole_set_process_name('swoole http master');
     }
 
     public function onManagerStart()
     {
-        swoole_set_process_name('swoole http server manager');
+        #set manager process name
+        swoole_set_process_name('swoole http manager');
+    }
+
+    public function onWorkerStart()
+    {
+        #maintain one lumen app instance in each worker process
+        $this->app = require base_path('bootstrap/app.php');
+        #set worker process name
+        swoole_set_process_name('swoole http worker');
     }
 
     public function onRequest(\swoole_http_request $request,\swoole_http_response $response)
     {
-        //convert swoole headers and server
-        $request = Request::convertHeaders($request);
+        #convert swoole request headers and servers to normal request headers and servers
+        $request = Request::convert($request);
 
-        //handle request and return illuminate response
+        #handle request and return illuminate response
         $illuminateResponse = Request::handle($request,$this->app);
 
-        //handle illuminate response
+        #handle returned illuminate response
         Response::handle($response,$illuminateResponse);
     }
 }

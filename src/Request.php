@@ -12,7 +12,7 @@ use Laravel\Lumen\Exceptions\Handler;
 
 class Request
 {
-    public static function convertHeaders($request)
+    public static function convert($request)
     {
         $newHeader = [];
         $swooleHeader = [];
