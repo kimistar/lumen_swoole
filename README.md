@@ -1,6 +1,6 @@
-## Speed up lumen5.5 api application by swoole extension
+## Speed up lumen5.5 framework by swoole extension
 
-### Start
+### Install & Start
 ```
 composer require kimistar/lumen_swoole
 ```
