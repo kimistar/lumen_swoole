@@ -12,23 +12,43 @@ use Laravel\Lumen\Exceptions\Handler;
 
 class Request
 {
-    public static function convert($request)
+    public static function convertServer($request)
     {
-        $newHeader = [];
-        $swooleHeader = [];
+        $header = [];
         foreach ($request->header as $key => $value) {
-            $newHeader[ucwords($key, '-')] = $value;
             $key = str_replace('-', '_', $key);
-            $swooleHeader['http_' . $key] = $value;
+            if (!in_array($key,['server_port','remote_addr'])) {
+                $header['http_' . $key] = $value;
+            } else {
+                $header[$key] = $value;
+            }
         }
-        $server = array_merge($request->server, $swooleHeader);
+        $server = array_merge($request->server, $header);
 
         // swoole has changed all keys to lower case
         $server = array_change_key_case($server, CASE_UPPER);
         $request->server = $server;
-        $request->header = $newHeader;
 
         return $request;
+    }
+
+    /**
+     * convert swoole request to illuminate request
+     * @param $request
+     * @return IlluminateRequest
+     */
+    public static function convertRequest($request)
+    {
+        $get = isset($request->get) ? $request->get : [];
+        $post = isset($request->post) ? $request->post : [];
+        $cookie = isset($request->cookie) ? $request->cookie : [];
+        $server = isset($request->server) ? $request->server : [];
+        //$header = isset($request->header) ? $request->header : [];
+        $files = isset($request->files) ? $request->files : [];
+
+        $content = $request->rawContent() ?: null;
+
+        return new IlluminateRequest($get, $post, [], $cookie, $files, $server, $content);
     }
 
     /**
@@ -54,24 +74,5 @@ class Request
         ob_end_clean();
 
         return $illuminateResponse;
-    }
-
-    /**
-     * convert swoole request to illuminate request
-     * @param $request
-     * @return IlluminateRequest
-     */
-    public static function convertRequest($request)
-    {
-        $get = isset($request->get) ? $request->get : [];
-        $post = isset($request->post) ? $request->post : [];
-        $cookie = isset($request->cookie) ? $request->cookie : [];
-        $server = isset($request->server) ? $request->server : [];
-        $header = isset($request->header) ? $request->header : [];
-        $files = isset($request->files) ? $request->files : [];
-
-        $content = $request->rawContent() ?: null;
-
-        return new IlluminateRequest($get, $post, []/* attributes */, $cookie, $files, $server, $content);
     }
 }

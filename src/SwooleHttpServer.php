@@ -55,12 +55,34 @@ class SwooleHttpServer
     public function onRequest(\swoole_http_request $request,\swoole_http_response $response)
     {
         #convert swoole request headers and servers to normal request headers and servers
-        $request = Request::convert($request);
+        $request = Request::convertServer($request);
+
+        #build global variables
+        $this->buildGlobals($request);
 
         #handle request and return illuminate response
         $illuminateResponse = Request::handle($request,$this->app);
 
         #handle returned illuminate response
         Response::handle($response,$illuminateResponse);
+    }
+
+    protected function buildGlobals($request)
+    {
+        foreach ($request->server as $key => $value) {
+            $_SERVER[$key] = $value;
+        }
+        if (isset($request->get)) {
+            $_GET = $request->get;
+        }
+        if (isset($request->post)) {
+            $_POST = $request->post;
+        }
+        if (isset($request->cookie)) {
+            $_COOKIE = $request->cookie;
+        }
+        if (isset($request->files)) {
+            $_FILES = $request->files;
+        }
     }
 }

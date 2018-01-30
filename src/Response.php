@@ -39,7 +39,6 @@ class Response
             };
         } else {
             $content = $illuminateResponse->getContent();
-            // check gzip
         }
         self::end($swooleReponse,$content);
     }
