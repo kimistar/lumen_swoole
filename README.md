@@ -30,7 +30,7 @@ return [
         |无状态Server可以使用1或3，同步阻塞Server使用3，异步非阻塞Server使用1
         |有状态使用2、4、5
          */
-        'dispatch_mode' => 3,
+        'dispatch_mode' => env('SWOOLE_DISPATCH_MODE',3),
         'daemonize' => env('SWOOLE_DAEMONIZE',1),
         'log_file' => storage_path('logs/swoole_server.log'),
         'pid_file' => storage_path('logs/swoole_server.pid'),
