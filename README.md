@@ -10,7 +10,7 @@ Register service provider in bootstrap/app.php
 $app->register(Star\LumenSwoole\SwooleServiceProvider::class);
 ```
 
-Configure your own config file named swoole.php in config dir
+Configure your own config file named swoole.php in config directory
 ```
 return [
     'host' => env('SWOOLE_HOST','127.0.0.1'),
@@ -37,13 +37,18 @@ return [
     ],
 ];
 ```
+And don't forget add the following code in bootstrap/app.php
+
+```
+$app->configure('swoole');
+```
 
 You can start | restart | stop | reload the swoole http server by artisan command
 ```
 php artisan swoole:http start | restart | stop | reload
 ```
 
-As you can see,the server listens on 8080 port and runs 8 worker processes.
+By default,the server listens on 8080 port and runs 8 worker processes.
 
 Then configure nginx server like this  @https://github.com/huang-yi/laravel-swoole-http
 ```nginx
