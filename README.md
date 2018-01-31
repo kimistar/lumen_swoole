@@ -18,6 +18,18 @@ return [
     'options' => [
         'worker_num' => env('SWOOLE_WORKER_NUM',8),
         'max_request' => env('SWOOLE_MAX_REQUEST',2000),
+        /*
+        |--------------------------
+        |@https://wiki.swoole.com/wiki/page/277.html
+        |1 轮循模式
+        |2 固定模式
+        |3 抢占模式
+        |4 IP分配
+        |5 UID分配
+        |--------------------------
+        |无状态Server可以使用1或3，同步阻塞Server使用3，异步非阻塞Server使用1
+        |有状态使用2、4、5
+         */
         'dispatch_mode' => 3,
         'daemonize' => env('SWOOLE_DAEMONIZE',1),
         'log_file' => storage_path('logs/swoole_server.log'),
