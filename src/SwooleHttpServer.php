@@ -54,6 +54,7 @@ class SwooleHttpServer
 
     public function onRequest(\swoole_http_request $request,\swoole_http_response $response)
     {
+        unset($_GET,$_POST,$_SERVER,$_COOKIE,$_FILES);
         #convert swoole request headers and servers to normal request headers and servers
         $request = Request::convertServer($request);
 

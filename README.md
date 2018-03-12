@@ -55,7 +55,7 @@ Then configure nginx server like this  @https://github.com/huang-yi/laravel-swoo
 server {
     listen 80;
     server_name your.domain.com;
-    root /path/to/laravel/public;
+    root /path/to/lumen/public;
     index index.php;
 
     location = /index.php {
@@ -71,18 +71,21 @@ server {
         set $suffix "";
         
         if ($uri = /index.php) {
-            set $suffix "/";
+            set $suffix "/?${query_string}";
         }
     
+        proxy_http_version 1.1;
+        proxy_set_header Connection "keep-alive";
         proxy_set_header Host $host;
         proxy_set_header SERVER_PORT $server_port;
         proxy_set_header REMOTE_ADDR $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Real-IP $remote_addr;
 
         # IF https
         # proxy_set_header HTTPS "on";
 
-        proxy_pass http://127.0.0.1:1215$suffix;
+        proxy_pass http://127.0.0.1:8080$suffix;
     }
 }
 ```

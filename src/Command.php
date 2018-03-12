@@ -11,7 +11,7 @@ use Illuminate\Console\Command as IlluminateCommand;
 
 class Command extends IlluminateCommand
 {
-    protected $signature = 'swoole:http {action : start | stop | reload | restart}';
+    protected $signature = 'swoole:http {action : start | restart | stop | reload | status}';
 
     protected $description = 'swoole http server';
 
@@ -39,8 +39,11 @@ class Command extends IlluminateCommand
             case 'reload':
                 $this->reload();
                 break;
+            case 'status':
+                $this->status();
+                break;
             default:
-                $this->error('Please type correct action . start | restart | stop | reload');
+                $this->error('Please type correct action . start | restart | stop | reload | status');
         }
     }
 
@@ -74,6 +77,11 @@ class Command extends IlluminateCommand
         $this->info('reloading...');
         $this->sendSignal(SIGUSR1);
         $this->info('reloaded');
+    }
+
+    protected function status()
+    {
+
     }
 
     protected function sendSignal($sig)
