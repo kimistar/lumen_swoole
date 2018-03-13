@@ -11,7 +11,7 @@ use Illuminate\Console\Command as IlluminateCommand;
 
 class Command extends IlluminateCommand
 {
-    protected $signature = 'swoole:http {action : start | restart | stop | reload | status}';
+    protected $signature = 'swoole:http {action : start | restart | reload | stop | quit | status}';
 
     protected $description = 'swoole http server';
 
@@ -33,11 +33,14 @@ class Command extends IlluminateCommand
             case 'restart':
                 $this->restart();
                 break;
+            case 'reload':
+                $this->reload();
+                break;
             case 'stop':
                 $this->stop();
                 break;
-            case 'reload':
-                $this->reload();
+            case 'quit':
+                $this->quit();
                 break;
             case 'status':
                 $this->status();
@@ -60,28 +63,39 @@ class Command extends IlluminateCommand
 
     protected function restart()
     {
-        $this->stop();
-        sleep(1);
+        $this->quit();
         $this->start();
-    }
-
-    protected function stop()
-    {
-        $this->info('stopping...');
-        $this->sendSignal(SIGTERM);
-        $this->info('stopped');
     }
 
     protected function reload()
     {
         $this->info('reloading...');
         $this->sendSignal(SIGUSR1);
-        $this->info('reloaded');
+        $this->info('done');
+    }
+
+    protected function stop()
+    {
+        $this->info('immediately stopping...');
+        $this->sendSignal(SIGTERM);
+        $this->info('done');
+    }
+
+    protected function quit()
+    {
+        $this->info('gracefully quitting...');
+        $this->sendSignal(SIGQUIT);
+        $this->info('done');
     }
 
     protected function status()
     {
-
+        $pid = $this->getPid();
+        if ($pid) {
+            $this->info('swoole http server is running. master pid : '.$pid);
+        } else {
+            $this->error('swoole http server is not running!');
+        }
     }
 
     protected function sendSignal($sig)

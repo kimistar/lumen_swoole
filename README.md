@@ -33,6 +33,7 @@ return [
         'dispatch_mode' => env('SWOOLE_DISPATCH_MODE',3),
         'daemonize' => env('SWOOLE_DAEMONIZE',1),
         'log_file' => storage_path('logs/swoole_server.log'),
+        'log_level' => env('SWOOLE_LOG_LEVEL',1), 
         'pid_file' => storage_path('logs/swoole_server.pid'),
     ],
 ];
@@ -43,13 +44,13 @@ return [
 $app->configure('swoole');
 ```
 
-通过Artisan命令行进行start restart stop reload操作
+通过Artisan命令行进行start restart stop reload quit status操作
 
+```
+php artisan swoole:http start | restart | stop | reload | quit | status
+```
 
 注意无法reload的文件 @https://wiki.swoole.com/wiki/page/p-server/reload.html
-```
-php artisan swoole:http start | restart | stop | reload
-```
 
 默认情况下，监听127.0.0.1 8080端口，开启8个worker进程
 
