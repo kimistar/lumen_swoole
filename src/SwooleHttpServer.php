@@ -7,6 +7,8 @@
  */
 namespace Star\LumenSwoole;
 
+use Laravel\Lumen\Application;
+
 class SwooleHttpServer
 {
     protected $config;
@@ -47,13 +49,14 @@ class SwooleHttpServer
     public function onWorkerStart()
     {
         #maintain one lumen app instance in each worker process
-        $this->app = require base_path('bootstrap/app.php');
+        $this->app = Application::getInstance();
         #set worker process name
         swoole_set_process_name('swoole http worker');
     }
 
     public function onRequest(\swoole_http_request $request,\swoole_http_response $response)
     {
+        #unset global variables on each request
         unset($_GET,$_POST,$_SERVER,$_COOKIE,$_FILES);
         #convert swoole request headers and servers to normal request headers and servers
         $request = Request::convertServer($request);
@@ -70,6 +73,8 @@ class SwooleHttpServer
 
     protected function buildGlobals($request)
     {
+        $_GET = $_POST = $_COOKIE = $_FILES = [];
+
         foreach ($request->server as $key => $value) {
             $_SERVER[$key] = $value;
         }

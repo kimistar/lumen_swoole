@@ -11,11 +11,6 @@ use Illuminate\Support\ServiceProvider;
 
 class SwooleServiceProvider extends ServiceProvider
 {
-    public function boot()
-    {
-
-    }
-
     public function register()
     {
         $this->mergeConfigFrom(
@@ -27,7 +22,7 @@ class SwooleServiceProvider extends ServiceProvider
         ]);
 
         $this->app->singleton('swoole.http',function($app) {
-            $swooleConfig = $app->make('config')->get('swoole');
+            $swooleConfig = $app['config']['swoole'];
             return new SwooleHttpServer($swooleConfig);
         });
     }

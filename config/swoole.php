@@ -25,6 +25,7 @@ return [
         'dispatch_mode' => 3,
         'daemonize' => 1,
         'log_file' => storage_path('logs/swoole_server.log'),
+        'log_level' => 5,
         'pid_file' => storage_path('logs/swoole_server.pid'),
     ],
 ];

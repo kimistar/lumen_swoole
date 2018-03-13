@@ -100,7 +100,7 @@ class Command extends IlluminateCommand
         $pid_file = config('swoole.options.pid_file');
         if (file_exists($pid_file)) {
             $pid = file_get_contents($pid_file);
-            if (posix_getpgid($pid)) {
+            if (posix_getpgid((int)$pid)) {
                 return $pid;
             } else {
                 unlink($pid_file);

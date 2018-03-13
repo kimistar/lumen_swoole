@@ -1,16 +1,16 @@
-## Speed up lumen5.5 framework by swoole extension
-
-### Install & Start
+## 安装
 ```
 composer require kimistar/lumen_swoole
 ```
 
-Register service provider in bootstrap/app.php
+## 使用
+
+在bootstrap/app.php中注册service provider
 ```
 $app->register(Star\LumenSwoole\SwooleServiceProvider::class);
 ```
 
-Configure your own config file named swoole.php in config directory
+可以配置自定义配置文件，命名为swoole.php
 ```
 return [
     'host' => env('SWOOLE_HOST','127.0.0.1'),
@@ -37,20 +37,24 @@ return [
     ],
 ];
 ```
-And don't forget add the following code in bootstrap/app.php
+同时在bootstrap/app.php加载此文件
 
 ```
 $app->configure('swoole');
 ```
 
-You can start | restart | stop | reload the swoole http server by artisan command
+通过Artisan命令行进行start restart stop reload操作
+
+
+注意无法reload的文件 @https://wiki.swoole.com/wiki/page/p-server/reload.html
 ```
 php artisan swoole:http start | restart | stop | reload
 ```
 
-By default,the server listens on 8080 port and runs 8 worker processes.
+默认情况下，监听127.0.0.1 8080端口，开启8个worker进程
 
-Then configure nginx server like this  @https://github.com/huang-yi/laravel-swoole-http
+使用Nginx作为代理服务器  @https://github.com/huang-yi/laravel-swoole-http/blob/master/README.md
+
 ```nginx
 server {
     listen 80;
