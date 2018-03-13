@@ -10,6 +10,7 @@ return [
     'port' => 8080,
     'options' => [
         'worker_num' => 8,
+        'task_worker_num' => 2,
         'max_request' => 2000,
         /*
         |--------------------------

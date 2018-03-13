@@ -11,7 +11,7 @@ use Illuminate\Console\Command as IlluminateCommand;
 
 class Command extends IlluminateCommand
 {
-    protected $signature = 'swoole:http {action : start | restart | reload | stop | quit | status}';
+    protected $signature = 'swoole:http {action : start | restart | reload | stop | status}';
 
     protected $description = 'swoole http server';
 
@@ -39,9 +39,6 @@ class Command extends IlluminateCommand
             case 'stop':
                 $this->stop();
                 break;
-            case 'quit':
-                $this->quit();
-                break;
             case 'status':
                 $this->status();
                 break;
@@ -63,7 +60,7 @@ class Command extends IlluminateCommand
 
     protected function restart()
     {
-        $this->quit();
+        $this->stop();
         $this->start();
     }
 
@@ -78,13 +75,6 @@ class Command extends IlluminateCommand
     {
         $this->info('immediately stopping...');
         $this->sendSignal(SIGTERM);
-        $this->info('done');
-    }
-
-    protected function quit()
-    {
-        $this->info('gracefully quitting...');
-        $this->sendSignal(SIGQUIT);
         $this->info('done');
     }
 

@@ -29,9 +29,20 @@ class SwooleHttpServer
         $this->server->on('start',[$this,'onStart']);
         $this->server->on('managerStart',[$this,'onManagerStart']);
         $this->server->on('workerStart',[$this,'onWorkerStart']);
+        $this->server->on('task',[$this,'onTask']);
+        $this->server->on('finish',[$this,'onFinish']);
         $this->server->on('request',[$this,'onRequest']);
         #start swoole http server
         $this->server->start();
+    }
+
+    public function task($obj,$method,$parmas = [])
+    {
+        $this->server->task([
+            'obj' => $obj,
+            'method' => $method,
+            'params' => $parmas,
+        ]);
     }
 
     public function onStart()
@@ -52,6 +63,26 @@ class SwooleHttpServer
         $this->app = Application::getInstance();
         #set worker process name
         swoole_set_process_name('swoole http worker');
+    }
+
+    public function onTask($serv,$task_id,$src_work_id,$data)
+    {
+        $obj = $data['obj'];
+        $method = $data['method'];
+        $params = $data['params'];
+
+        call_user_func_array([$obj,$method],$params);
+
+        $serv->finish(json_encode([
+            'class' => get_class($obj),
+            'method' => $method,
+            'params' => $params,
+        ]));
+    }
+
+    public function onFinish($serv,$task_id,$data)
+    {
+        file_put_contents($this->app->storagePath('logs/swoole_task.log'),$data,FILE_APPEND);
     }
 
     public function onRequest(\swoole_http_request $request,\swoole_http_response $response)

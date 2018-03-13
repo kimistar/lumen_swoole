@@ -17,6 +17,7 @@ return [
     'port' => env('SWOOLE_PORT',8080),
     'options' => [
         'worker_num' => env('SWOOLE_WORKER_NUM',8),
+        'task_worker_num' => env('SWOOLE_TASK_WORKER_NUM',2),
         'max_request' => env('SWOOLE_MAX_REQUEST',2000),
         /*
         |--------------------------
@@ -44,10 +45,10 @@ return [
 $app->configure('swoole');
 ```
 
-通过Artisan命令行进行start restart stop reload quit status操作
+通过Artisan命令行进行start restart stop reload status操作
 
 ```
-php artisan swoole:http start | restart | stop | reload | quit | status
+php artisan swoole:http start | restart | stop | reload | status
 ```
 
 注意无法reload的文件 @https://wiki.swoole.com/wiki/page/p-server/reload.html
