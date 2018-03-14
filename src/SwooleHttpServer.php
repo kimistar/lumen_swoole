@@ -36,10 +36,14 @@ class SwooleHttpServer
         $this->server->start();
     }
 
-    public function task($obj,$method,$parmas = [])
+    public function task($class,$method,$parmas = [])
     {
+        if (strpos($class,'/') !== false) {
+            $class = str_replace('/',"\\",$class);
+        }
+        $fullClass = "\\App\\Http\\Tasks\\".$class;
         $this->server->task([
-            'obj' => $obj,
+            'class' => $fullClass,
             'method' => $method,
             'params' => $parmas,
         ]);
@@ -67,22 +71,16 @@ class SwooleHttpServer
 
     public function onTask($serv,$task_id,$src_work_id,$data)
     {
-        $obj = $data['obj'];
+        $obj = new $data['class']();
         $method = $data['method'];
         $params = $data['params'];
 
         call_user_func_array([$obj,$method],$params);
-
-        $serv->finish(json_encode([
-            'class' => get_class($obj),
-            'method' => $method,
-            'params' => $params,
-        ]));
     }
 
     public function onFinish($serv,$task_id,$data)
     {
-        file_put_contents($this->app->storagePath('logs/swoole_task.log'),$data,FILE_APPEND);
+
     }
 
     public function onRequest(\swoole_http_request $request,\swoole_http_response $response)

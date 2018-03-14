@@ -53,7 +53,7 @@ php artisan swoole:http start | restart | stop | reload | status
 
 注意无法reload的文件 @https://wiki.swoole.com/wiki/page/p-server/reload.html
 
-默认情况下，监听127.0.0.1 8080端口，开启8个worker进程
+默认情况下，监听127.0.0.1 8080端口，开启8个worker进程 2个task worker进程
 
 使用Nginx作为代理服务器  @https://github.com/huang-yi/laravel-swoole-http/blob/master/README.md
 
