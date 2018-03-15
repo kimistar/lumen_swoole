@@ -11,9 +11,11 @@ use Illuminate\Console\Command as IlluminateCommand;
 
 class Command extends IlluminateCommand
 {
-    protected $signature = 'swoole:http {action : start | restart | reload | stop | status}';
+    protected $signature = 'swoole:http 
+                            {action : how to handle the server}
+                            {--d : whether to run the server in daemon}';
 
-    protected $description = 'swoole http server';
+    protected $description = 'Handle swoole http server start | restart | reload | stop | status';
 
     public function __construct()
     {
@@ -26,9 +28,10 @@ class Command extends IlluminateCommand
             $this->error('First of all,you must install swoole extension!');
         }
         $action = $this->argument('action');
+        $daemon = $this->option('d');
         switch ($action) {
             case 'start':
-                $this->start();
+                $this->start($daemon);
                 break;
             case 'restart':
                 $this->restart();
@@ -47,7 +50,7 @@ class Command extends IlluminateCommand
         }
     }
 
-    protected function start()
+    protected function start($daemon)
     {
         if ($this->getPid()) {
             $this->error('swoole http server is already running');
@@ -55,12 +58,23 @@ class Command extends IlluminateCommand
         }
 
         $this->info('starting swoole http server...');
-        app()->make('swoole.http')->run();
+        swoole_http()->run($daemon);
     }
 
     protected function restart()
     {
-        $this->stop();
+        $this->info('stopping swoole http server...');
+        $pid = $this->sendSignal(SIGTERM);
+        $time = 0;
+        while (posix_getpgid($pid)) {
+            usleep(100000);
+            $time++;
+            if ($time > 50) {
+                $this->error('timeout...');
+                exit(1);
+            }
+        }
+        $this->info('done');
         $this->start();
     }
 
@@ -97,14 +111,15 @@ class Command extends IlluminateCommand
             $this->error('swoole http is not running!');
             exit(1);
         }
+        return $pid;
     }
 
     protected function getPid()
     {
         $pid_file = config('swoole.options.pid_file');
         if (file_exists($pid_file)) {
-            $pid = file_get_contents($pid_file);
-            if (posix_getpgid((int)$pid)) {
+            $pid = intval(file_get_contents($pid_file));
+            if (posix_getpgid($pid)) {
                 return $pid;
             } else {
                 unlink($pid_file);

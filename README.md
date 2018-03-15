@@ -3,7 +3,7 @@
 composer require kimistar/lumen_swoole
 ```
 
-## 使用
+## 配置
 
 在bootstrap/app.php中注册service provider
 ```
@@ -32,7 +32,6 @@ return [
         |有状态使用2、4、5
          */
         'dispatch_mode' => env('SWOOLE_DISPATCH_MODE',3),
-        'daemonize' => env('SWOOLE_DAEMONIZE',1),
         'log_file' => storage_path('logs/swoole_server.log'),
         'log_level' => env('SWOOLE_LOG_LEVEL',1), 
         'pid_file' => storage_path('logs/swoole_server.pid'),
@@ -45,17 +44,24 @@ return [
 $app->configure('swoole');
 ```
 
-通过Artisan命令行进行start restart stop reload status操作
+## 使用
+
+启动swoole http server --d以守护进程方式启动
+```
+php artisan swoole:http start --d
+```
+
+其他操作
 
 ```
-php artisan swoole:http start | restart | stop | reload | status
+php artisan swoole:http restart | stop | reload | status
 ```
 
 注意无法reload的文件 @https://wiki.swoole.com/wiki/page/p-server/reload.html
 
 默认情况下，监听127.0.0.1 8080端口，开启8个worker进程 2个task worker进程
 
-使用Nginx作为代理服务器  @https://github.com/huang-yi/laravel-swoole-http/blob/master/README.md
+### 配置Nginx @https://github.com/huang-yi/laravel-swoole-http/blob/master/README.md
 
 ```nginx
 server {

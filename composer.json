@@ -21,6 +21,9 @@
         "psr-4": {
             "Star\\LumenSwoole\\": "src/",
             "Star\\Tests\\": "tests/"
-        }
+        },
+        "files": [
+            "src/helpers.php"
+        ]
     }
 }

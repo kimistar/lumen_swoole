@@ -21,8 +21,13 @@ class SwooleHttpServer
         $this->server = new \swoole_http_server($this->config['host'],$this->config['port']);
     }
 
-    public function run()
+    public function run($daemon = false)
     {
+        if ($daemon) {
+            $this->config['options']['daemonize'] = 1;
+        } else {
+            $this->config['options']['daemonize'] = 0;
+        }
         #set swoole http server configuration
         $this->server->set($this->config['options']);
         #set event listener
@@ -61,15 +66,19 @@ class SwooleHttpServer
         swoole_set_process_name('swoole http manager');
     }
 
-    public function onWorkerStart()
+    public function onWorkerStart(\swoole_http_server $server,$worker_id)
     {
         #maintain one lumen app instance in each worker process
         $this->app = Application::getInstance();
         #set worker process name
-        swoole_set_process_name('swoole http worker');
+        if($worker_id < $server->setting['worker_num']) {
+            swoole_set_process_name('swoole http worker');
+        }else {
+            swoole_set_process_name('swoole http task worker');
+        }
     }
 
-    public function onTask($serv,$task_id,$src_work_id,$data)
+    public function onTask(\swoole_http_server $serv,$task_id,$src_work_id,$data)
     {
         $obj = new $data['class']();
         $method = $data['method'];
@@ -78,7 +87,7 @@ class SwooleHttpServer
         call_user_func_array([$obj,$method],$params);
     }
 
-    public function onFinish($serv,$task_id,$data)
+    public function onFinish(\swoole_http_server $serv,$task_id,$data)
     {
 
     }
