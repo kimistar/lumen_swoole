@@ -50,8 +50,10 @@ $app->configure('swoole');
 ```
 php artisan swoole:http start --d
 ```
+默认监听127.0.0.1 8080端口，开启8个worker进程 2个task worker进程
 
-其他操作
+
+其他 重启/停止/重载/状态
 
 ```
 php artisan swoole:http restart | stop | reload | status
@@ -65,20 +67,17 @@ php artisan swoole:http restart | stop | reload | status
 - config/*
 - app/Console/*
 
-### 投递任务至task worker进程
+投递任务至task worker进程
 - 闭包
 ```
 swoole_http()->task(function() {
     //code
 });
 ```
-- 类(\App\Http\Tasks\Class)/方法/参数
+- (\App\Http\Tasks\Class)类/方法/参数
 ```
 swoole_http()->task('Class','method',$params = []);
 ```
-
-
-默认情况下，监听127.0.0.1 8080端口，开启8个worker进程 2个task worker进程
 
 配置Nginx @https://github.com/huang-yi/laravel-swoole-http/blob/master/README.md
 
