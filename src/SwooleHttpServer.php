@@ -8,6 +8,7 @@
 namespace Star\LumenSwoole;
 
 use Laravel\Lumen\Application;
+use SuperClosure\SerializableClosure;
 
 class SwooleHttpServer
 {
@@ -41,17 +42,22 @@ class SwooleHttpServer
         $this->server->start();
     }
 
-    public function task($class,$method,$parmas = [])
+    public function task($class,$method = '',$parmas = [])
     {
-        if (strpos($class,'/') !== false) {
-            $class = str_replace('/',"\\",$class);
+        if ($class instanceof \Closure) {
+            $this->server->task(serialize(new SerializableClosure($class)));
         }
-        $fullClass = "\\App\\Http\\Tasks\\".$class;
-        $this->server->task([
-            'class' => $fullClass,
-            'method' => $method,
-            'params' => $parmas,
-        ]);
+        if (is_string($class)) {
+            if (strpos($class,'/') !== false) {
+                $class = str_replace('/',"\\",$class);
+            }
+            $fullClass = "\\App\\Http\\Tasks\\".$class;
+            $this->server->task([
+                'class' => $fullClass,
+                'method' => $method,
+                'params' => $parmas,
+            ]);
+        }
     }
 
     public function onStart()
@@ -80,11 +86,19 @@ class SwooleHttpServer
 
     public function onTask(\swoole_http_server $serv,$task_id,$src_work_id,$data)
     {
-        $obj = new $data['class']();
-        $method = $data['method'];
-        $params = $data['params'];
+        if (is_string($data)) {
+            $func = unserialize($data);
+            $func();
+        }
+        if (is_array($data)) {
+            $obj = new $data['class']();
+            $method = $data['method'];
+            $params = $data['params'];
 
-        call_user_func_array([$obj,$method],$params);
+            if (is_callable([$obj,$method])) {
+                call_user_func_array([$obj,$method],$params);
+            }
+        }
     }
 
     public function onFinish(\swoole_http_server $serv,$task_id,$data)

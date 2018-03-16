@@ -50,7 +50,7 @@ class Command extends IlluminateCommand
         }
     }
 
-    protected function start($daemon)
+    protected function start($daemon = true)
     {
         if ($this->getPid()) {
             $this->error('swoole http server is already running');
@@ -75,7 +75,7 @@ class Command extends IlluminateCommand
             }
         }
         $this->info('done');
-        $this->start();
+        $this->start(true);
     }
 
     protected function reload()

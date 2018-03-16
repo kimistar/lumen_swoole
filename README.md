@@ -59,9 +59,16 @@ php artisan swoole:http restart | stop | reload | status
 
 注意无法reload的文件 @https://wiki.swoole.com/wiki/page/p-server/reload.html
 
+大致有
+- bootstrap/app.php
+- app/Providers/*
+- config/*
+- app/Console/*
+
+
 默认情况下，监听127.0.0.1 8080端口，开启8个worker进程 2个task worker进程
 
-### 配置Nginx @https://github.com/huang-yi/laravel-swoole-http/blob/master/README.md
+配置Nginx @https://github.com/huang-yi/laravel-swoole-http/blob/master/README.md
 
 ```nginx
 server {
