@@ -59,11 +59,23 @@ php artisan swoole:http restart | stop | reload | status
 
 注意无法reload的文件 @https://wiki.swoole.com/wiki/page/p-server/reload.html
 
-大致有
+包括但不限于
 - bootstrap/app.php
 - app/Providers/*
 - config/*
 - app/Console/*
+
+### 投递任务至task worker进程
+- 闭包
+```
+swoole_http()->task(function() {
+    //code
+});
+```
+- 类(\App\Http\Tasks\Class)/方法/参数
+```
+swoole_http()->task('Class','method',$params = []);
+```
 
 
 默认情况下，监听127.0.0.1 8080端口，开启8个worker进程 2个task worker进程
