@@ -43,12 +43,12 @@ class Request
         $post = isset($request->post) ? $request->post : [];
         $cookie = isset($request->cookie) ? $request->cookie : [];
         $server = isset($request->server) ? $request->server : [];
-        //$header = isset($request->header) ? $request->header : [];
+        $header = isset($request->header) ? $request->header : [];
         $files = isset($request->files) ? $request->files : [];
 
         $content = $request->rawContent() ?: null;
 
-        return new IlluminateRequest($get, $post, [], $cookie, $files, $server, $content);
+        return new IlluminateRequest($get, $post, $header, $cookie, $files, $server, $content);
     }
 
     /**

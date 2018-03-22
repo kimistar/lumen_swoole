@@ -24,13 +24,15 @@ class SwooleHttpServer
 
     public function run($daemon = false)
     {
+        unset($this->config['host'],$this->config['port']);
+
         if ($daemon) {
-            $this->config['options']['daemonize'] = 1;
+            $this->config['daemonize'] = 1;
         } else {
-            $this->config['options']['daemonize'] = 0;
+            $this->config['daemonize'] = 0;
         }
         #set swoole http server configuration
-        $this->server->set($this->config['options']);
+        $this->server->set($this->config);
         #set event listener
         $this->server->on('start',[$this,'onStart']);
         $this->server->on('managerStart',[$this,'onManagerStart']);

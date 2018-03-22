@@ -10,32 +10,14 @@ composer require kimistar/lumen_swoole
 $app->register(Star\LumenSwoole\SwooleServiceProvider::class);
 ```
 
-可以配置自定义配置文件，命名为swoole.php
+自定义配置文件覆盖默认配置，命名为swoole.php
 ```
 return [
     'host' => env('SWOOLE_HOST','127.0.0.1'),
     'port' => env('SWOOLE_PORT',8080),
-    'options' => [
-        'worker_num' => env('SWOOLE_WORKER_NUM',8),
-        'task_worker_num' => env('SWOOLE_TASK_WORKER_NUM',2),
-        'max_request' => env('SWOOLE_MAX_REQUEST',2000),
-        /*
-        |--------------------------
-        |@https://wiki.swoole.com/wiki/page/277.html
-        |1 轮循模式
-        |2 固定模式
-        |3 抢占模式
-        |4 IP分配
-        |5 UID分配
-        |--------------------------
-        |无状态Server可以使用1或3，同步阻塞Server使用3，异步非阻塞Server使用1
-        |有状态使用2、4、5
-         */
-        'dispatch_mode' => env('SWOOLE_DISPATCH_MODE',3),
-        'log_file' => storage_path('logs/swoole_server.log'),
-        'log_level' => env('SWOOLE_LOG_LEVEL',1), 
-        'pid_file' => storage_path('logs/swoole_server.pid'),
-    ],
+    'worker_num' => env('SWOOLE_WORKER_NUM',8),
+    'task_worker_num' => env('SWOOLE_TASK_WORKER_NUM',2),
+    //
 ];
 ```
 同时在bootstrap/app.php加载此文件
