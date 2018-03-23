@@ -11,7 +11,7 @@ use Illuminate\Console\Command as IlluminateCommand;
 
 class Command extends IlluminateCommand
 {
-    protected $signature = 'swoole:http 
+    protected $signature = 'sumen 
                             {action : how to handle the server}
                             {--d : whether to run the server in daemon}';
 
