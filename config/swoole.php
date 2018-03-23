@@ -14,6 +14,6 @@ return [
     'log_file' => storage_path('logs/swoole_server.log'),
     'log_level' => 5,
     'pid_file' => storage_path('logs/swoole_server.pid'),
-    'heartbeat_idle_time' => 300,
-    'heartbeat_check_interval' => 30,
+    'heartbeat_idle_time' => 30,
+    'heartbeat_check_interval' => 10,
 ];

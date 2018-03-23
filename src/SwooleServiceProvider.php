@@ -13,15 +13,15 @@ class SwooleServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        $this->mergeConfigFrom(
-            __DIR__ . '/../config/swoole.php', 'swoole'
-        );
-
         $this->commands([
             Command::class,
         ]);
 
         $this->app->singleton('swoole.http',function($app) {
+            $this->mergeConfigFrom(
+                __DIR__ . '/../config/swoole.php', 'swoole'
+            );
+
             $swooleConfig = $app['config']['swoole'];
             return new SwooleHttpServer($swooleConfig);
         });
