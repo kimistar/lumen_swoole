@@ -44,21 +44,21 @@ class SwooleHttpServer
         $this->server->start();
     }
 
-    public function task($class,$method = '',$parmas = [])
+    /**
+     * @param $func | 投递的闭包
+     * @param null $callback | 回调
+     */
+    public function task($func,$callback = null)
     {
-        if ($class instanceof \Closure) {
-            $this->server->task(serialize(new SerializableClosure($class)));
-        }
-        if (is_string($class)) {
-            if (strpos($class,'/') !== false) {
-                $class = str_replace('/',"\\",$class);
+        if ($func instanceof \Closure) {
+            $data = [
+                'func' => serialize(new SerializableClosure($func)),
+                'callback' => null,
+            ];
+            if ($callback instanceof \Closure) {
+                $data['callback'] = serialize(new SerializableClosure($callback));
             }
-            $fullClass = "\\App\\Http\\Tasks\\".$class;
-            $this->server->task([
-                'class' => $fullClass,
-                'method' => $method,
-                'params' => $parmas,
-            ]);
+            $this->server->task($data);
         }
     }
 
@@ -88,24 +88,17 @@ class SwooleHttpServer
 
     public function onTask(\swoole_http_server $serv,$task_id,$src_work_id,$data)
     {
-        if (is_string($data)) {
-            $func = unserialize($data);
-            $func();
-        }
-        if (is_array($data)) {
-            $obj = new $data['class']();
-            $method = $data['method'];
-            $params = $data['params'];
-
-            if (is_callable([$obj,$method])) {
-                call_user_func_array([$obj,$method],$params);
-            }
+        $func = unserialize($data['func']);
+        $func();
+        if (!is_null($data['callback'])) {
+            $this->server->finish($data['callback']);
         }
     }
 
     public function onFinish(\swoole_http_server $serv,$task_id,$data)
     {
-
+        $callback = unserialize($data);
+        $callback();
     }
 
     public function onRequest(\swoole_http_request $request,\swoole_http_response $response)
