@@ -52,7 +52,6 @@ php artisan sumen restart | stop | reload | status
 - 闭包
 ```
 swoole_http()->task(\Closure $func,\Closure $callback);
-$callback：任务执行完毕后的回调
 ```
 
 配置Nginx @https://github.com/huang-yi/laravel-swoole-http/blob/master/README.md
