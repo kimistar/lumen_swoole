@@ -101,117 +101,60 @@ server {
 swoole http server
 
 ```
-ab -c 100 -n 1000 -k http://api.swoole.com/
-This is ApacheBench, Version 2.3 <$Revision: 1706008 $>
+ab -c 100 -n 20000  http://api.swoole.cn/
+This is ApacheBench, Version 2.3 <$Revision: 655654 $>
 Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
 Licensed to The Apache Software Foundation, http://www.apache.org/
   
-Benchmarking api.swoole.com (be patient)
-Completed 100 requests
-Completed 200 requests
-Completed 300 requests
-Completed 400 requests
-Completed 500 requests
-Completed 600 requests
-Completed 700 requests
-Completed 800 requests
-Completed 900 requests
-Completed 1000 requests
-Finished 1000 requests
+Benchmarking api.swoole.cn (be patient)
+Completed 2000 requests
+Completed 4000 requests
+Completed 6000 requests
+Completed 8000 requests
+Completed 10000 requests
+Completed 12000 requests
+Completed 14000 requests
+Completed 16000 requests
+Completed 18000 requests
+Completed 20000 requests
+Finished 20000 requests
   
   
-Server Software:        nginx
-Server Hostname:        api.swoole.com
+Server Software:        nginx/1.10.2
+Server Hostname:        api.swoole.cn
 Server Port:            80
   
 Document Path:          /
-Document Length:        11 bytes
+Document Length:        9 bytes
   
 Concurrency Level:      100
-Time taken for tests:   0.921 seconds
-Complete requests:      1000
+Time taken for tests:   2.373 seconds
+Complete requests:      20000
 Failed requests:        0
-Keep-Alive requests:    1000
-Total transferred:      185000 bytes
-HTML transferred:       11000 bytes
-Requests per second:    1085.93 [#/sec] (mean)
-Time per request:       92.087 [ms] (mean)
-Time per request:       0.921 [ms] (mean, across all concurrent requests)
-Transfer rate:          196.19 [Kbytes/sec] received
+Write errors:           0
+Total transferred:      6240000 bytes
+HTML transferred:       180000 bytes
+Requests per second:    8427.15 [#/sec] (mean)
+Time per request:       11.866 [ms] (mean)
+Time per request:       0.119 [ms] (mean, across all concurrent requests)
+Transfer rate:          2567.65 [Kbytes/sec] received
   
 Connection Times (ms)
               min  mean[+/-sd] median   max
-Connect:        0    0   0.5      0       3
-Processing:    71   91   7.5     91     107
-Waiting:       71   91   7.5     91     107
-Total:         71   92   7.8     91     110
+Connect:        0    1   1.1      1       7
+Processing:     1   11   5.2     10      40
+Waiting:        1   10   5.1      9      40
+Total:          1   12   5.2     11      41
   
 Percentage of the requests served within a certain time (ms)
-  50%     91
-  66%     93
-  75%     96
-  80%     96
-  90%    107
-  95%    108
-  98%    109
-  99%    109
- 100%    110 (longest request)
+  50%     11
+  66%     13
+  75%     15
+  80%     16
+  90%     19
+  95%     22
+  98%     25
+  99%     28
+ 100%     41 (longest request)
 ```
-
-php-fpm
-```
-ab -c 100 -n 1000 -k http://api.lumen.com/
-This is ApacheBench, Version 2.3 <$Revision: 1706008 $>
-Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
-Licensed to The Apache Software Foundation, http://www.apache.org/
-  
-Benchmarking api.lumen.com (be patient)
-Completed 100 requests
-Completed 200 requests
-Completed 300 requests
-Completed 400 requests
-Completed 500 requests
-Completed 600 requests
-Completed 700 requests
-Completed 800 requests
-Completed 900 requests
-Completed 1000 requests
-Finished 1000 requests
-  
-Server Software:        nginx
-Server Hostname:        api.lumen.com
-Server Port:            80
-  
-Document Path:          /
-Document Length:        11 bytes
-  
-Concurrency Level:      100
-Time taken for tests:   47.174 seconds
-Complete requests:      1000
-Failed requests:        0
-Keep-Alive requests:    0
-Total transferred:      175000 bytes
-HTML transferred:       11000 bytes
-Requests per second:    21.20 [#/sec] (mean)
-Time per request:       4717.403 [ms] (mean)
-Time per request:       47.174 [ms] (mean, across all concurrent requests)
-Transfer rate:          3.62 [Kbytes/sec] received
-   
-Connection Times (ms)
-              min  mean[+/-sd] median   max
-Connect:        0    0   1.1      0       5
-Processing:   444 4520 761.4   4669    5386
-Waiting:      444 4520 761.4   4669    5386
-Total:        449 4521 760.4   4669    5388
-  
-Percentage of the requests served within a certain time (ms)
-  50%   4669
-  66%   4743
-  75%   4832
-  80%   4872
-  90%   4897
-  95%   4986
-  98%   5186
-  99%   5295
- 100%   5388 (longest request)
-```
+php-fpm(很慢，略)
