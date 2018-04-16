@@ -32,7 +32,7 @@ $app->configure('swoole');
 ```
 php artisan sumen start --d
 ```
-默认监听127.0.0.1 8080端口，开启4个worker进程 1个task worker进程
+默认监听127.0.0.1 8080端口，开启4个worker进程
 
 其他 重启/停止/重载/状态
 

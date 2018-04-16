@@ -5,6 +5,7 @@
  * Date: 2018/1/20
  * Time: 15:48
  */
+
 namespace Star\LumenSwoole;
 
 use Illuminate\Http\Request as IlluminateRequest;
@@ -17,7 +18,7 @@ class Request
         $header = [];
         foreach ($request->header as $key => $value) {
             $key = str_replace('-', '_', $key);
-            if (!in_array($key,['server_port','remote_addr'])) {
+            if (!in_array($key, ['server_port', 'remote_addr'])) {
                 $header['http_' . $key] = $value;
             } else {
                 $header[$key] = $value;
@@ -55,11 +56,11 @@ class Request
      * handle request with lumen app and return illuminate response
      * @param $request
      */
-    public static function handle($request,$app)
+    public static function handle($request, $app)
     {
         ob_start();
         $illuminateRequest = self::convertRequest($request);
-        try{
+        try {
             $illuminateResponse = $app->handle($illuminateRequest);
 
             $content = $illuminateResponse->getContent();
@@ -67,8 +68,8 @@ class Request
             if (strlen($content) === 0 && ob_get_length() > 0) {
                 $illuminateResponse->setContent(ob_get_contents());
             }
-        }catch (\Exception $exception) {
-            $illuminateResponse = (new Handler())->render($illuminateRequest,$exception);
+        } catch (\Exception $exception) {
+            $illuminateResponse = (new Handler())->render($illuminateRequest, $exception);
         }
 
         ob_end_clean();

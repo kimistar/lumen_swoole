@@ -5,6 +5,7 @@
  * Date: 2018/1/20
  * Time: 15:50
  */
+
 namespace Star\LumenSwoole;
 
 use Illuminate\Console\Command as IlluminateCommand;
@@ -96,7 +97,7 @@ class Command extends IlluminateCommand
     {
         $pid = $this->getPid();
         if ($pid) {
-            $this->info('swoole http server is running. master pid : '.$pid);
+            $this->info('swoole http server is running. master pid : ' . $pid);
         } else {
             $this->error('swoole http server is not running!');
         }

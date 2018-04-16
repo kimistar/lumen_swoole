@@ -5,13 +5,14 @@
  * Date: 2018/1/20
  * Time: 15:49
  */
+
 namespace Star\LumenSwoole;
 
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class Response
 {
-    public static function handle($swooleReponse,$illuminateResponse)
+    public static function handle($swooleReponse, $illuminateResponse)
     {
         // status
         $swooleReponse->status($illuminateResponse->getStatusCode());
@@ -40,10 +41,10 @@ class Response
         } else {
             $content = $illuminateResponse->getContent();
         }
-        self::end($swooleReponse,$content);
+        self::end($swooleReponse, $content);
     }
 
-    public static function end($swooleResponse,$content)
+    public static function end($swooleResponse, $content)
     {
         if (!is_string($content)) {
             $swooleResponse->sendfile(realpath($content()));

@@ -5,6 +5,7 @@
  * Date: 2018/1/20
  * Time: 15:47
  */
+
 namespace Star\LumenSwoole;
 
 use Laravel\Lumen\Application;
@@ -19,12 +20,12 @@ class SwooleHttpServer
     public function __construct($swooleConfig)
     {
         $this->config = $swooleConfig;
-        $this->server = new \swoole_http_server($this->config['host'],$this->config['port']);
+        $this->server = new \swoole_http_server($this->config['host'], $this->config['port']);
     }
 
     public function run($daemon = false)
     {
-        unset($this->config['host'],$this->config['port']);
+        unset($this->config['host'], $this->config['port']);
 
         if ($daemon) {
             $this->config['daemonize'] = 1;
@@ -34,12 +35,14 @@ class SwooleHttpServer
         #set swoole http server configuration
         $this->server->set($this->config);
         #set event listener
-        $this->server->on('start',[$this,'onStart']);
-        $this->server->on('managerStart',[$this,'onManagerStart']);
-        $this->server->on('workerStart',[$this,'onWorkerStart']);
-        $this->server->on('task',[$this,'onTask']);
-        $this->server->on('finish',[$this,'onFinish']);
-        $this->server->on('request',[$this,'onRequest']);
+        $this->server->on('start', [$this, 'onStart']);
+        $this->server->on('managerStart', [$this, 'onManagerStart']);
+        $this->server->on('workerStart', [$this, 'onWorkerStart']);
+        if (isset($this->config['task_worker_num'])) {
+            $this->server->on('task', [$this, 'onTask']);
+            $this->server->on('finish', [$this, 'onFinish']);
+        }
+        $this->server->on('request', [$this, 'onRequest']);
         #start swoole http server
         $this->server->start();
     }
@@ -48,7 +51,7 @@ class SwooleHttpServer
      * @param $func | 投递的闭包
      * @param null $callback | 回调
      */
-    public function task($func,$callback = null)
+    public function task($func, $callback = null)
     {
         if ($func instanceof \Closure) {
             $data = [
@@ -74,19 +77,26 @@ class SwooleHttpServer
         swoole_set_process_name('swoole http manager');
     }
 
-    public function onWorkerStart(\swoole_http_server $server,$worker_id)
+    public function onWorkerStart(\swoole_http_server $server, $worker_id)
     {
         #maintain one lumen app instance in each worker process
         $this->app = Application::getInstance();
+
+        if ($worker_id == 0) {
+            if (extension_loaded('inotify')) {
+                (new Inotify($this->server))->watch();
+            }
+        }
+
         #set worker process name
-        if($worker_id < $server->setting['worker_num']) {
+        if ($worker_id < $server->setting['worker_num']) {
             swoole_set_process_name('swoole http worker');
-        }else {
+        } else {
             swoole_set_process_name('swoole http task worker');
         }
     }
 
-    public function onTask(\swoole_http_server $serv,$task_id,$src_work_id,$data)
+    public function onTask(\swoole_http_server $serv, $task_id, $src_work_id, $data)
     {
         $func = unserialize($data['func']);
         $func();
@@ -95,49 +105,21 @@ class SwooleHttpServer
         }
     }
 
-    public function onFinish(\swoole_http_server $serv,$task_id,$data)
+    public function onFinish(\swoole_http_server $serv, $task_id, $data)
     {
         $callback = unserialize($data);
         $callback();
     }
 
-    public function onRequest(\swoole_http_request $request,\swoole_http_response $response)
+    public function onRequest(\swoole_http_request $request, \swoole_http_response $response)
     {
         #convert swoole request headers and servers to normal request headers and servers
         $request = Request::convertServer($request);
 
-        #build global variables
-        $this->buildGlobals($request);
-
         #handle request and return illuminate response
-        $illuminateResponse = Request::handle($request,$this->app);
+        $illuminateResponse = Request::handle($request, $this->app);
 
         #handle returned illuminate response
-        Response::handle($response,$illuminateResponse);
-    }
-
-    protected function buildGlobals($request)
-    {
-        $_SERVER = [];
-        $_GET = [];
-        $_POST = [];
-        $_COOKIE = [];
-        $_FILES = [];
-
-        foreach ($request->server as $key => $value) {
-            $_SERVER[$key] = $value;
-        }
-        if (isset($request->get)) {
-            $_GET = $request->get;
-        }
-        if (isset($request->post)) {
-            $_POST = $request->post;
-        }
-        if (isset($request->cookie)) {
-            $_COOKIE = $request->cookie;
-        }
-        if (isset($request->files)) {
-            $_FILES = $request->files;
-        }
+        Response::handle($response, $illuminateResponse);
     }
 }
