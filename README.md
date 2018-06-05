@@ -28,17 +28,10 @@ $app->configure('swoole');
 
 ## 使用
 
-启动swoole http server --d以守护进程方式启动
 ```
-php artisan sumen start --d
+php artisan sumen start | restart | stop | reload | status
 ```
 默认监听127.0.0.1 8080端口，开启4个worker进程
-
-其他 重启/停止/重载/状态
-
-```
-php artisan sumen restart | stop | reload | status
-```
 
 注意无法reload的文件 @https://wiki.swoole.com/wiki/page/p-server/reload.html
 
@@ -97,8 +90,6 @@ server {
 ```
 
 ## ab测试
- 
-swoole http server
 
 ```
 ab -c 100 -n 20000  http://api.swoole.cn/
@@ -157,4 +148,3 @@ Percentage of the requests served within a certain time (ms)
   99%     28
  100%     41 (longest request)
 ```
-php-fpm(很慢，略)

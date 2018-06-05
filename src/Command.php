@@ -12,11 +12,9 @@ use Illuminate\Console\Command as IlluminateCommand;
 
 class Command extends IlluminateCommand
 {
-    protected $signature = 'sumen 
-                            {action : how to handle the server}
-                            {--d : whether to run the server in daemon}';
+    protected $signature = 'sumen {action : how to handle the server}';
 
-    protected $description = 'Handle swoole http server start | restart | reload | stop | status';
+    protected $description = 'Handle swoole http server with start | restart | reload | stop | status';
 
     public function __construct()
     {
@@ -29,10 +27,9 @@ class Command extends IlluminateCommand
             $this->error('First of all,you must install swoole extension!');
         }
         $action = $this->argument('action');
-        $daemon = $this->option('d');
         switch ($action) {
             case 'start':
-                $this->start($daemon);
+                $this->start();
                 break;
             case 'restart':
                 $this->restart();
@@ -51,7 +48,7 @@ class Command extends IlluminateCommand
         }
     }
 
-    protected function start($daemon = true)
+    protected function start()
     {
         if ($this->getPid()) {
             $this->error('swoole http server is already running');
@@ -59,7 +56,7 @@ class Command extends IlluminateCommand
         }
 
         $this->info('starting swoole http server...');
-        swoole_http()->run($daemon);
+        swoole_http()->run();
     }
 
     protected function restart()

@@ -23,15 +23,14 @@ class SwooleHttpServer
         $this->server = new \swoole_http_server($this->config['host'], $this->config['port']);
     }
 
-    public function run($daemon = false)
+    public function run()
     {
         unset($this->config['host'], $this->config['port']);
 
-        if ($daemon) {
+        if (!isset($this->config['daemonize'])) {
             $this->config['daemonize'] = 1;
-        } else {
-            $this->config['daemonize'] = 0;
         }
+
         #set swoole http server configuration
         $this->server->set($this->config);
         #set event listener
