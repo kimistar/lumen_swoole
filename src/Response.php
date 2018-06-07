@@ -12,18 +12,18 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class Response
 {
-    public static function handle($swooleReponse, $illuminateResponse)
+    public static function handle($swooleResponse, $illuminateResponse)
     {
         // status
-        $swooleReponse->status($illuminateResponse->getStatusCode());
+        $swooleResponse->status($illuminateResponse->getStatusCode());
         foreach ($illuminateResponse->headers->allPreserveCase() as $name => $values) {
             foreach ($values as $value) {
-                $swooleReponse->header($name, $value);
+                $swooleResponse->header($name, $value);
             }
         }
         // cookies
         foreach ($illuminateResponse->headers->getCookies() as $cookie) {
-            $swooleReponse->rawcookie(
+            $swooleResponse->rawcookie(
                 $cookie->getName(),
                 urlencode($cookie->getValue()),
                 $cookie->getExpiresTime(),
@@ -35,21 +35,10 @@ class Response
         }
         // content
         if ($illuminateResponse instanceof BinaryFileResponse) {
-            $content = function () use ($illuminateResponse) {
-                return $illuminateResponse->getFile()->getPathname();
-            };
+            $realPath = realpath($illuminateResponse->getFile()->getPathname());
+            $swooleResponse->sendfile($realPath);
         } else {
             $content = $illuminateResponse->getContent();
-        }
-        self::end($swooleReponse, $content);
-    }
-
-    public static function end($swooleResponse, $content)
-    {
-        if (!is_string($content)) {
-            $swooleResponse->sendfile(realpath($content()));
-        } else {
-            // send content & close
             $swooleResponse->end($content);
         }
     }
