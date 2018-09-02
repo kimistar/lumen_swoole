@@ -47,43 +47,28 @@ php artisan sumen start | restart | stop | reload | status
 swoole_http()->task(\Closure $func,\Closure $callback);
 ```
 
-配置Nginx @https://github.com/huang-yi/laravel-swoole-http/blob/master/README.md
+配置Nginx
 
 ```nginx
 server {
     listen 80;
     server_name your.domain.com;
-    root /path/to/lumen/public;
-    index index.php;
-
-    location = /index.php {
-        # Ensure that there is no such file named "not_exists" in your "public" directory.
-        try_files /not_exists @swoole;
-    }
 
     location / {
-        try_files $uri $uri/ @swoole;
+        try_files /_not_exists @swoole;
     }
 
     location @swoole {
-        set $suffix "";
-        
-        if ($uri = /index.php) {
-            set $suffix "/?${query_string}";
-        }
-    
         proxy_http_version 1.1;
-        proxy_set_header Connection "keep-alive";
+        #proxy_set_header Connection "keep-alive";
         proxy_set_header Host $host;
         proxy_set_header SERVER_PORT $server_port;
         proxy_set_header REMOTE_ADDR $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Real-IP $remote_addr;
-
-        # IF https
         # proxy_set_header HTTPS "on";
 
-        proxy_pass http://127.0.0.1:8080$suffix;
+        proxy_pass http://127.0.0.1:8080;
     }
 }
 ```
