@@ -11,7 +11,6 @@
   ],
   "require": {
     "php": ">=7.0",
-    "laravel/lumen-framework": ">=5.5.0",
     "ext-swoole": ">=1.8.0",
     "jeremeamia/superclosure": "^2.0"
   },
