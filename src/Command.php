@@ -73,7 +73,7 @@ class Command extends IlluminateCommand
             }
         }
         $this->info('done');
-        $this->start(true);
+        $this->start();
     }
 
     protected function reload()
