@@ -23,9 +23,6 @@ class Command extends IlluminateCommand
 
     public function handle()
     {
-        if (!extension_loaded('swoole')) {
-            $this->error('First of all,you must install swoole extension!');
-        }
         $action = $this->argument('action');
         switch ($action) {
             case 'start':
@@ -56,7 +53,7 @@ class Command extends IlluminateCommand
         }
 
         $this->info('starting swoole http server...');
-        swoole_http()->run();
+        app()->make('swoole.http')->run();
     }
 
     protected function restart()

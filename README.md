@@ -10,14 +10,13 @@ composer require kimistar/lumen_swoole
 $app->register(Star\LumenSwoole\SwooleServiceProvider::class);
 ```
 
-自定义配置文件覆盖默认配置，命名为swoole.php
+自定义配置文件swoole.php 覆盖默认配置
 ```
 return [
     'host' => env('SWOOLE_HOST','127.0.0.1'),
     'port' => env('SWOOLE_PORT',8080),
     'worker_num' => env('SWOOLE_WORKER_NUM',8),
-    'task_worker_num' => env('SWOOLE_TASK_WORKER_NUM',2),
-    //
+    ...
 ];
 ```
 同时在bootstrap/app.php加载此文件
@@ -40,12 +39,6 @@ php artisan sumen start | restart | stop | reload | status
 - app/Providers/*
 - config/*
 - app/Console/*
-
-投递任务至task worker进程
-- 闭包
-```
-swoole_http()->task(\Closure $func,\Closure $callback);
-```
 
 配置Nginx
 
