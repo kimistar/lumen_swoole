@@ -15,16 +15,18 @@ class SwooleHttpServer
     protected $config;
     protected $server;
     protected $app;
+    protected $heartBeatInternal;
 
     public function __construct($swooleConfig)
     {
         $this->config = $swooleConfig;
+        $this->heartBeatInternal = $this->config['heart_beat_internal'];
         $this->server = new \swoole_http_server($this->config['host'], $this->config['port']);
     }
 
     public function run()
     {
-        unset($this->config['host'], $this->config['port']);
+        unset($this->config['host'], $this->config['port'], $this->config['heart_beat_internal']);
 
         if (SWOOLE_VERSION >= '2.0') {
             $this->config['enable_coroutine'] = false;
@@ -70,10 +72,8 @@ class SwooleHttpServer
         }
 
         // mysql redis 心跳检查 执行ping操作
-        $server->tick(300 * 1000, function () {
-            if ($this->app->heartBeat instanceof \Closure) {
-                $this->app->heartBeat();
-            }
+        $server->tick($this->heartBeatInternal * 1000, function () {
+            $this->app->make('heartBeat');
         });
     }
 

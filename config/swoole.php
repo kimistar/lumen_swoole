@@ -16,4 +16,5 @@ return [
     'log_level' => 5,
     'pid_file' => storage_path('logs/swoole.pid'),
     'open_tcp_nodelay' => 1,
+    'heart_beat_internal' => 300,
 ];
