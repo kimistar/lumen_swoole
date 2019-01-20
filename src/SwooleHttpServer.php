@@ -42,12 +42,16 @@ class SwooleHttpServer
 
     public function onStart()
     {
-        swoole_set_process_name('swoole http master');
+        if (PHP_OS == 'Linux') {
+            swoole_set_process_name('swoole http master');
+        }
     }
 
     public function onManagerStart()
     {
-        swoole_set_process_name('swoole http manager');
+        if (PHP_OS == 'Linux') {
+            swoole_set_process_name('swoole http manager');
+        }
     }
 
     public function onWorkerStart(\swoole_http_server $server, $worker_id)
@@ -61,7 +65,16 @@ class SwooleHttpServer
             }
         }
 
-        swoole_set_process_name('swoole http worker');
+        if (PHP_OS == 'Linux') {
+            swoole_set_process_name('swoole http worker');
+        }
+
+        // mysql redis 心跳检查 执行ping操作
+        $server->tick(300 * 1000, function () {
+            if ($this->app->heartBeat instanceof \Closure) {
+                $this->app->heartBeat();
+            }
+        });
     }
 
     public function onRequest(\swoole_http_request $request, \swoole_http_response $response)

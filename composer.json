@@ -1,6 +1,6 @@
 {
   "name": "kimistar/lumen_swoole",
-  "description": "accelerate lumen framework by swoole",
+  "description": "speed up lumen framework by swoole",
   "type": "library",
   "license": "MIT",
   "authors": [
