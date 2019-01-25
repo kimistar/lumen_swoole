@@ -14,7 +14,7 @@ class Command extends IlluminateCommand
 {
     protected $signature = 'sumen {action : how to handle the server}';
 
-    protected $description = 'Handle swoole http server with start | restart | reload | stop | status';
+    protected $description = '开启|关闭|重启|重载swoole http server';
 
     public function __construct()
     {
@@ -40,8 +40,19 @@ class Command extends IlluminateCommand
             case 'status':
                 $this->status();
                 break;
+            case 'vendor:publish':
+                $this->vendorPublish();
+                break;
             default:
-                $this->error('Please type correct action . start | restart | stop | reload | status');
+                $this->info(
+                    'Please type correct action.'.PHP_EOL.
+                    '  start'.PHP_EOL.
+                    '  stop'.PHP_EOL.
+                    '  restart'.PHP_EOL.
+                    '  reload'.PHP_EOL.
+                    '  status'.PHP_EOL.
+                    '  vendor:publish'.PHP_EOL
+                );
         }
     }
 
@@ -121,5 +132,17 @@ class Command extends IlluminateCommand
             }
         }
         return false;
+    }
+
+    protected function vendorPublish()
+    {
+        $source = __DIR__ . '/../config/swoole.php';
+        if (!is_dir(base_path('config'))) {
+            mkdir(base_path('config'));
+        }
+        $dst = base_path('config/swoole.php');
+        copy($source, $dst);
+
+        $this->info('success');
     }
 }

@@ -10,15 +10,9 @@ composer require kimistar/lumen_swoole
 $app->register(Star\LumenSwoole\SwooleServiceProvider::class);
 ```
 
-自定义配置文件swoole.php 覆盖默认配置
-```
-return [
-    'host' => env('SWOOLE_HOST','127.0.0.1'),
-    'port' => env('SWOOLE_PORT',8080),
-    'worker_num' => env('SWOOLE_WORKER_NUM',8),
-    ...
-];
-```
+发布配置文件
+`php artisan sumen vendor:publish`
+
 同时在bootstrap/app.php加载此文件
 
 ```
