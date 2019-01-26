@@ -6,22 +6,24 @@ composer require kimistar/lumen_swoole
 ## 配置
 
 在bootstrap/app.php中注册service provider
-```
+```php
 $app->register(Star\LumenSwoole\SwooleServiceProvider::class);
 ```
 
 发布配置文件
-`php artisan sumen vendor:publish`
+```php
+php artisan sumen vendor:publish
+```
 
 同时在bootstrap/app.php加载此文件
 
-```
+```php
 $app->configure('swoole');
 ```
 
 ## 使用
 
-```
+```php
 php artisan sumen start | restart | stop | reload | status
 ```
 默认监听127.0.0.1 8080端口，开启4个worker进程
